@@ -1,0 +1,77 @@
+import json
+import os
+from typing import List, Dict, Any
+
+# Ruta al archivo de datos
+DATA_PATH = os.path.join("data", "data.json")
+
+def cargar_datos() -> List[Dict[str, Any]]:
+    """
+    Carga el histórico de registros climáticos desde el almacenamiento persistente.
+
+    Esta función lee el archivo JSON definido en DATA_PATH y garantiza la continuidad 
+    de la aplicación: si el archivo no existe o su contenido no es un JSON válido, 
+    devuelve una lista vacía en lugar de interrumpir la ejecución del programa.
+
+    Returns:
+        List[Dict[str, Any]]: Lista de diccionarios con todos los registros 
+            históricos. Devuelve una lista vacía si el archivo no existe, está vacío 
+            o está dañado.
+
+    Raises:
+        No lanza excepciones. Los errores de E/S y de decodificación de JSON 
+        son capturados internamente para asegurar la estabilidad del sistema.
+    """
+    if not os.path.exists(DATA_PATH):
+        return []
+
+    try:
+        with open(DATA_PATH, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (json.JSONDecodeError, FileNotFoundError):
+        # Manejo de error si el archivo está dañado o no existe 
+        return []
+
+def guardar_registro(nuevo_registro: Dict[str, Any], datos: List[Dict[str, Any]]) -> bool:
+    """
+    Añade un nuevo registro al archivo JSON y persiste los cambios.
+
+    Args:
+        nuevo_registro (Dict[str, Any]): Diccionario con los datos validados 
+            (fecha, zona, temperatura, humedad, viento, alerta).
+        datos (List[Dict[str, Any]]): Lista de diccionarios que representa 
+            la base de datos actual cargada en memoria.
+
+    Returns:
+        bool: True si el registro se guardó con éxito. False si ocurrió un error de E/S (permisos, 
+            disco lleno, ruta no encontrada).
+    """
+    datos.append(nuevo_registro)
+
+    try:
+        # Guardar manteniendo la estructura original 
+        with open(DATA_PATH, 'w', encoding='utf-8') as f:
+            json.dump(datos, f, indent=4, ensure_ascii=False)
+        return True
+    except Exception:
+        # Gestión de errores de escritura
+        return False
+
+def consultar_por_zona(zona: str, datos: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Filtra los registros meteorológicos de una zona específica.
+
+    La búsqueda no distingue entre mayúsculas y minúsculas para evitar errores del 
+    usuario.
+
+    Args:
+        zona (str): Nombre de la zona geográfica a filtrar.
+        datos (List[Dict[str, Any]]): Lista de diccionarios que contiene el 
+            histórico completo de mediciones en memoria.
+
+    Returns:
+        List[Dict[str, Any]]: Lista que contiene los 
+            registros que coinciden con la zona proporcionada. Si no hay 
+            coincidencias, devuelve una lista vacía [].
+    """
+    return [r for r in datos if r['zona'].lower() == zona.lower()]
