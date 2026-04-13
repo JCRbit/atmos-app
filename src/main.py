@@ -45,6 +45,7 @@ def ejecutar_registro() -> None:
                 if not es_unico:
                     print(f"\n⚠️  AVISO: Ya existe una medición para la zona '{zona}' en la fecha {fecha}.")
                     print("No se ha guardado el registro para evitar datos repetidos.")
+                    break
                 else:
                     # 4. Guardar registro (I/O)
                     del alertas["mensajes"]
