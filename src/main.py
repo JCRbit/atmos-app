@@ -3,7 +3,7 @@ import time
 import ui
 from utils import limpiar_pantalla, imprimir_encabezado_h2
 from validation import validar_zona_registro, validar_duplicado
-from alerts import evaluar_alertas
+from alerts import evaluar_alerta
 import io_manager as io
 
 def ejecutar_registro() -> None:
@@ -30,7 +30,7 @@ def ejecutar_registro() -> None:
     ui.mostrar_resumen_registro(registro)
 
     # Evaluación de alertas
-    alertas = evaluar_alertas(registro)
+    alertas = evaluar_alerta(registro)
     for alerta in alertas["mensajes"]:
         print(f"⚠️  ALERTA: {alerta}")
     
