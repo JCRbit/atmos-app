@@ -1,7 +1,7 @@
 import time
 from datetime import date
 import sys
-from utils import limpiar_pantalla, imprimir_encabezado_h1, normalizar_entrada 
+import utils
 import validation as val
 
 def solicitar_fecha(msg_fecha):
@@ -25,7 +25,7 @@ def solicitar_fecha(msg_fecha):
             elif val.validar_fecha_registro(fecha):
                 return fecha
             else:
-                print(f"   ❌ Error: {fecha} no es una fecha válida. Inténtalo de nuevo.")
+                print(f"   ❌ {formatear_texto('Error')}: {fecha} no es una fecha válida. Inténtalo de nuevo.")
         except EOFError:
             return None
         
@@ -37,9 +37,9 @@ def solicitar_zona(msg_zona):
             if val.validar_zona_registro(zona):
                 return zona
             elif zona == "":
-                print(f"   ❌ Error: Este campo no puede estar vacio. Introduce una zona.")
+                print(f"   ❌ {formatear_texto('Error')}: Este campo no puede estar vacio. Introduce una zona.")
             else:
-                print(f"   ❌ Error: {zona} no es una zona válida. Inténtalo de nuevo.")
+                print(f"   ❌ {formatear_texto('Error')}: {zona} no es una zona válida. Inténtalo de nuevo.")
         except EOFError:
             return None
         
@@ -49,7 +49,7 @@ def solicitar_dato_numerico(msg_dato, f_validacion, medida="medida"):
         try:    
             dato = input(f"➤  {msg_dato}").strip().lower()
             # Normalizar antes de validar: cambiar ',' por '.'
-            dato = normalizar_entrada(dato)
+            dato = utils.normalizar_entrada(dato)
             
             try:
                 dato = float(dato)
@@ -57,12 +57,12 @@ def solicitar_dato_numerico(msg_dato, f_validacion, medida="medida"):
                 if es_valido:
                     return dato
                 else:
-                    print(f"   ❌ Error: {dato} no está dentro del rango permitido. Inténtalo de nuevo.")
+                    print(f"   ❌ {formatear_texto('Error')}: {dato} no está dentro del rango permitido. Inténtalo de nuevo.")
             except ValueError:
                 if dato == "":
-                    print(f"   ❌ Error: Este campo no puede estar vacío. Inténtalo de nuevo.")                        
+                    print(f"   ❌ {formatear_texto('Error')}: Este campo no puede estar vacío. Inténtalo de nuevo.")                        
                 else:
-                    print(f"   ❌ Error: {dato} no es una medición de {medida} permitida. Inténtalo de nuevo.")         
+                    print(f"   ❌ {formatear_texto('Error')}: {dato} no es una medición de {medida} permitida. Inténtalo de nuevo.")         
         except EOFError:
             return None
         
@@ -71,7 +71,7 @@ def solicitar_medicion():
     Recoge una medición completa.
 
     Returns:
-        Un diccionario con la medición o None si el usuario cancela la operación.
+        dict: Diccionario con la medición o None si el usuario cancela la operación.
     """  
     try:
         # Solicitar datos
@@ -125,17 +125,25 @@ def mostrar_menu_principal() -> str:
     Returns:
         str: El carácter o número ingresado por el usuario.
     """
-    imprimir_encabezado_h1("ATMOS: GESTIÓN METEOROLÓGICA URBANA")
+    utils.imprimir_encabezado_h1("ATMOS: GESTIÓN METEOROLÓGICA URBANA")
     print(" [1] Registrar nueva medición")
     print(" [2] Consultar registro meteorológico por zona")
     print(" [3] Ver histórico")
     print(" [4] Ver estadísticas")
     print(" [X] Salir")
     print("-" * 50)
-    return input("Seleccione una opción: ").strip()
+    return input("Selecciona una opción: ").strip()
 
-def mostrar_resumen_registro(registro) -> str:
+def mostrar_resumen_registro(registro: dict) -> str:
+    """
+    Imprime en consola una tabla visual con los datos meteorológicos capturados.
 
+    Args:
+        registro (dict): Diccionario que contiene los datos de la medición. 
+
+    Returns:
+        None
+    """
     print("\n" + "─" * 50)
     print("RESUMEN DE LOS DATOS INTRODUCIDOS:\n")
     print(f"   • Fecha:       {registro["fecha_registro"]}")
@@ -146,12 +154,17 @@ def mostrar_resumen_registro(registro) -> str:
     print("─" * 50)
 
 def mostrar_confirmacion() -> str:
+    """
+    Solicita al usuario una decisión mediante una entrada de teclado.
 
+    Returns:
+        str: La opción seleccionada por el usuario.
+    """
     print("\n¿Desea guardar este registro?")
     print(" [1] Aceptar")
     print(" [2] Cancelar")
     print(" [X] Salir")
-    return input("\n>> Seleccione una opción: ")
+    return input("\n>> Selecciona una opción: ")
 
 def mostrar_submenu_consultas() -> str:
     """
@@ -165,9 +178,9 @@ def mostrar_submenu_consultas() -> str:
     """
     print("\n" + "-"*50)
     print(" [1] Realizar otra consulta")
-    print(" [2] Volver al menú principal")
+    print(" [X] Salir")
     print("-"*50)
-    return input("Seleccione una opción: ").strip()
+    return input("Selecciona una opción: ").strip()
 
 def efecto_maquina_escribir(texto: str, velocidad: float = 0.03) -> None:
     """
@@ -194,7 +207,7 @@ def transicion_bienvenida() -> None:
         None
     """
     try:
-        limpiar_pantalla()
+        utils.limpiar_pantalla()
         imprimir_logo_atmos('bienvenida')
         print("\n" + " " * 20 + "Iniciando Atmos® ...")
         time.sleep(1.5)  
@@ -211,13 +224,13 @@ def transicion_despedida() -> None:
         None
     """
     try: 
-        limpiar_pantalla()
+        utils.limpiar_pantalla()
         imprimir_logo_atmos('despedida')
         efecto_maquina_escribir("\n" + " " * 22 + "Cerrando sesión ...")
         time.sleep(1)
         print(" " * 18 + "¡Gracias por usar Atmos®!")
         time.sleep(2)
-        limpiar_pantalla()
+        utils.limpiar_pantalla()
     except KeyboardInterrupt:
         return
     
@@ -323,9 +336,9 @@ def imprimir_logo_atmos(estado: str=None) -> None:
     logo_nombre = logo_nombre.strip('\n')
     
     if estado == 'bienvenida':
-        imprimir_linea_por_linea(f"{color_azul}{logo_ascii}{reset}")
+        imprimir_linea_por_linea(utils.formatear_texto(logo_ascii, color="azul", estilo=""))
     elif estado == 'despedida':
         logo_completo = logo_ascii +logo_nombre
-        imprimir_linea_por_linea(f"{color_azul}{logo_completo}{reset}")
+        imprimir_linea_por_linea(utils.formatear_texto(logo_completo, color="azul", estilo=""))
     else:
-        print(f"{color_azul}{logo_ascii}{reset}")
+        print(utils.formatear_texto(logo_ascii, color="azul", estilo=""))
