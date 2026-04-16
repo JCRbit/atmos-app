@@ -58,9 +58,12 @@ def mostrar_grafico(variable: str, unidad: str, fechas: List[datetime], datos: L
         # Configuración de la figura de Plotille
         fig = plotille.Figure()
         fig.width = 70
-        fig.height = 8 
+        fig.height = 8
+        fig.color_mode = 'byte'
         fig.x_label = 'mm-yyyy'
         fig.y_label = unidad
+        fig.set_x_limits(min_=fechas[0], max_=fechas[-1])
+        fig.set_y_limits(min_=min(datos), max_=max(datos))
 
         # Eje X: Muestra Mes-Año
         fig.register_label_formatter(datetime, lambda dt, *a, **k: dt.strftime("%m-%Y"))
