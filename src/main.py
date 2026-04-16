@@ -27,7 +27,7 @@ def hacer_registro_usuario():
     print("\n--- REGISTRO DE USUARIO ---")
     usuario = input("Usuario: ")
     email = input("Email: ")
-    contrasena = input("Contraseña: ")
+    contrasena = input("Contraseña (Mínimo 8 caracteres: letras (A-z), \nnúmeros (0-9) y caracteres especiales): ")
 
     correcto, mensaje = registrar_usuario(usuario, email, contrasena)
     print(mensaje)
@@ -304,7 +304,7 @@ def ver_historico():
             for r in bloque:
                 print(f"📅 {r['fecha_registro']} | 🌡️  {r['temperatura']}°C | 💧 {r['humedad_nivel']}% | 💨 {r['viento_velocidad']} km/h\n")
                 if r.get("mensajes"):
-                            print(f"⚠️ Alertas:")
+                            print(f"⚠️ {formatear_texto('Alertas')}:")
                             for alerta in r["mensajes"]:
                                 print(f"      - {alerta}")
                 else:
@@ -362,6 +362,11 @@ def estadisticas_por_zona() -> None:
             datos_zona = [d for d in datos if d['zona_registro'].lower() == zona_buscada]
             datos_zona.sort(key=lambda x: datetime.strptime(x['fecha_registro'], "%Y-%m-%d"))
             
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> feat/ui-enhancements
             if datos_zona:
                 log_info(f"Generando estadísticas para zona: {zona_buscada} ({len(datos_zona)} registros)")
                 
@@ -388,7 +393,12 @@ def estadisticas_por_zona() -> None:
 
                 except ValueError as ve:
                     log_error(f"Error de conversión de tipos en zona {zona_buscada}: {ve}")
+<<<<<<< HEAD
                     print(f"❌ Error: Datos corruptos detectados en los registros de esta zona.")
+=======
+                    print(f"❌ {formatear_texto('Error')}: Datos corruptos detectados en "
+                          "los registros de esta zona.")
+>>>>>>> feat/ui-enhancements
             
             else:
                 log_error(f"La zona '{zona_buscada}' no existe en la base de datos.")
@@ -414,6 +424,10 @@ def estadisticas_por_zona() -> None:
             print("\n\n⚠️  Operación cancelada.")
             return
 
+<<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
+>>>>>>> feat/ui-enhancements
 def iniciar_aplicacion() -> None:
     """
     Punto de entrada principal que mantiene el bucle de ejecución de la App.
