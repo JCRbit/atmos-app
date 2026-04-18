@@ -30,7 +30,7 @@ def solicitar_fecha(msg_fecha: str) -> str:
         elif val.validar_fecha_registro(fecha):
             return fecha
         else:
-            print(f"   ❌ {formatear_texto('Error')}:"
+            print(f"   {formatear_texto('Error')}:"
                   f" {formatear_texto(fecha, estilo="normal")} no es una fecha válida.")
         
 def solicitar_zona(msg_zona: str) -> str:
@@ -51,10 +51,10 @@ def solicitar_zona(msg_zona: str) -> str:
         if val.validar_zona_registro(zona):
             return zona
         elif zona == "":
-            print(f"   ❌ {formatear_texto('Error')}: Este campo no puede"
+            print(f"   {formatear_texto('Error')}: Este campo no puede"
                   f" estar {formatear_texto('vacío', estilo="normal")}.")
         else:
-            print(f"   ❌ {formatear_texto('Error')}: "
+            print(f"   {formatear_texto('Error')}: "
                   f"{formatear_texto(zona, estilo="normal")} no es una zona válida.")
         
 def solicitar_dato_numerico(msg_dato: str, 
@@ -86,15 +86,15 @@ def solicitar_dato_numerico(msg_dato: str,
             if es_valido:
                 return dato
             else:
-                print(f"   ❌ {formatear_texto('Error')}: "
+                print(f"   {formatear_texto('Error')}: "
                       f"{formatear_texto(dato, estilo="normal")} "
                       f"no está dentro del rango permitido.")
         except ValueError:
             if dato == "":
-                print(f"   ❌ {formatear_texto('Error')}: Este campo no "
+                print(f"   {formatear_texto('Error')}: Este campo no "
                       f"puede estar {formatear_texto('vacío', estilo="normal")}.")                        
             else:
-                print(f"   ❌ {formatear_texto('Error')}: "
+                print(f"   {formatear_texto('Error')}: "
                       f"{formatear_texto(dato, estilo="normal")} no es una {medida} permitida.")         
         
 def solicitar_medicion() -> Optional[dict]:
@@ -148,7 +148,7 @@ def solicitar_medicion() -> Optional[dict]:
         }  
 
     except KeyboardInterrupt:
-        print(f"\n\n⚠️  {formatear_texto('Operación cancelada', 'amarillo')}: "
+        print(f"\n\n  {formatear_texto('Operación cancelada', 'amarillo')}: "
                "Volviendo al menú principal.")
         time.sleep(2)
         return

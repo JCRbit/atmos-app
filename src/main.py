@@ -108,7 +108,7 @@ def ejecutar_registro() -> None:
     if alertas["mensajes"]:
         log_warning(f"Alertas meteorológicas detectadas para {zona}: {alertas['mensajes']}")
         for alerta in alertas["mensajes"]:
-            print(f"⚠️  {formatear_texto('Alerta')}: {alerta}")
+            print(f"  {formatear_texto('Alerta')}: {alerta}")
     
     opcion = ui.mostrar_confirmacion()
     while True:
@@ -120,18 +120,18 @@ def ejecutar_registro() -> None:
                 
                 if not es_unico:
                     log_warning(f"Intento de registro duplicado bloqueado: Zona '{zona}', Fecha {fecha}")
-                    print(f"\n⚠️  {formatear_texto('AVISO', "amarillo")}: Ya existe una medición para la zona '{zona}' en la fecha {fecha}.")
+                    print(f"\n  {formatear_texto('AVISO', "amarillo")}: Ya existe una medición para la zona '{zona}' en la fecha {fecha}.")
                     print("No se ha guardado el registro para evitar datos repetidos.")
                     break
                 else:
                     # 4. Guardar registro (I/O)
                     registro.update(alertas)
 
-                    print("\n💾 Guardando datos...")
+                    print("\n...Guardando datos...")
                     time.sleep(0.5)
 
                     if io.guardar_registro(registro, datos):
-                        print(f"\n✅ Registro guardado correctamente.")
+                        print(f"\nRegistro guardado correctamente.")
                         time.sleep(1)
                         log_info(f"Registro persistido con éxito en data.json para la zona {zona}.")
                         break
@@ -146,7 +146,7 @@ def ejecutar_registro() -> None:
                 return
         except KeyboardInterrupt:
             log_info("Operación cancelada por KeyboardInterrupt (Ctrl+C).")
-            print(f"\n\n⚠️  {formatear_texto('Operación cancelada', 'amarillo')}")
+            print(f"\n\n  {formatear_texto('Operación cancelada', 'amarillo')}")
             return
 
 def consultar_por_zona() -> None:
@@ -178,25 +178,26 @@ def consultar_por_zona() -> None:
                 zona = formatear_texto(zona_busqueda.upper(), "blanco")
                 num = formatear_texto(num_resultados, "blanco") 
                 if num_resultados == 1:
-                    print(f"\n🔍 Se ha encontrado {num} registro en la zona {zona}:")
+                    print(f"\n Se ha encontrado {num} registro en la zona {zona}:")
                 else:
-                    print(f"\n🔍 Se han encontrado {num} registros en la zona {zona}:")
+                    print(f"\n Se han encontrado {num} registros en la zona {zona}:")
                 
                 log_info(f"Resultados encontrados para {zona_busqueda}: {num_resultados}")
                 
                 print("-" * 50)
                 for r in resultados:
                     fecha = formatear_texto(r['fecha_registro'], color="blanco")
-                    print(f"📅 {fecha} | 🌡️  {r['temperatura']}°C | 💧 {r['humedad_nivel']}% | 💨 {r['viento_velocidad']} km/h")
+                    print(f" {fecha} | {r['temperatura']}°C | {r['humedad_nivel']}% |"
+                          f" {r['viento_velocidad']} km/h")
                     if r.get("mensajes"):
-                        print(f"   ⚠️ {formatear_texto('Alertas')}:")
+                        print(f"\n   {formatear_texto('Alertas')}:")
                         for alerta in r["mensajes"]:
                             print(f"        - {alerta}")
                     print('.' * 50)
      
             else:
                 zona_error = formatear_texto(zona_busqueda.upper())
-                print(f"\nℹ️  No se encontraron registros para la zona {zona_error}")
+                print(f"\nNo se encontraron registros para la zona {zona_error}")
 
             # Preguntar al usuario qué quiere hacer a continuación
             while True: 
@@ -208,13 +209,13 @@ def consultar_por_zona() -> None:
                     log_info("Usuario regresó al menú principal.")
                     return
                 
-                print(f"\n⚠️  '{opcion if opcion else ' '}' no es una opción válida.")
+                print(f"\n '{opcion if opcion else ' '}' no es una opción válida.")
                 time.sleep(1)
                 borrar_lineas(8)
 
         except KeyboardInterrupt:
             log_info("Consulta cancelada por el usuario.")
-            print(f"\n\n⚠️  {formatear_texto('Operación cancelada', 'amarillo')}: "
+            print(f"\n\n  {formatear_texto('Operación cancelada', 'amarillo')}: "
                    "Volviendo al menú principal.")
             time.sleep(2)
             return 
@@ -223,7 +224,7 @@ def ver_historico():
     datos = io.cargar_datos()
 
     if not datos:
-        print("\n⚠️ No existe datos registrados en el sistema")
+        print("\nNo existe datos registrados en el sistema")
         return
     
     #Opcion filtrar por fechas
@@ -307,9 +308,10 @@ def ver_historico():
 
             for r in bloque:
                 fecha = formatear_texto(r['fecha_registro'], color="blanco")
-                print(f"📅 {fecha} | 🌡️  {r['temperatura']}°C | 💧 {r['humedad_nivel']}% | 💨 {r['viento_velocidad']} km/h\n")
+                print(f" {fecha} | {r['temperatura']}°C | {r['humedad_nivel']}% |"
+                      f" {r['viento_velocidad']} km/h\n")
                 if r.get("mensajes"):
-                    print(f"   ⚠️ {formatear_texto('Alertas')}:")
+                    print(f"   {formatear_texto('Alertas')}:")
                     for alerta in r["mensajes"]:
                         print(f"      - {alerta}")
                 else:
@@ -356,7 +358,7 @@ def estadisticas_por_zona() -> None:
     
     if not datos:
         log_warning("Consulta de estadísticas fallida: Archivo de datos vacío o no encontrado.")
-        print("\n⚠️ No hay datos registrados para analizar.")
+        print("\nNo hay datos registrados para analizar.")
         return
     
     while True:
@@ -392,12 +394,12 @@ def estadisticas_por_zona() -> None:
             
                 except ValueError as ve:
                     log_error(f"Error de conversión de tipos en zona {zona_buscada}: {ve}")
-                    print(f"❌ {formatear_texto('Error')}: Datos corruptos detectados en "
+                    print(f"{formatear_texto('Error')}: Datos corruptos detectados en "
                           "los registros de esta zona.")
             
             else:
                 log_error(f"La zona '{zona_buscada}' no existe en la base de datos.")
-                print(f"❌ No existen registros de la zona '{zona_buscada}'.")
+                print(f"No existen registros de la zona '{zona_buscada}'.")
         
             # Preguntar al usuario qué quiere hacer a continuación
             while True: 
@@ -409,13 +411,13 @@ def estadisticas_por_zona() -> None:
                     log_info("Usuario regresó al menú principal.")
                     return
                 
-                print(f"\n⚠️  '{opcion if opcion else ' '}' no es una opción válida.")
+                print(f"\n  '{opcion if opcion else ' '}' no es una opción válida.")
                 time.sleep(1)
                 borrar_lineas(8)
 
         except KeyboardInterrupt:
             log_info("Consulta de estadísiticas cancelada por el usuario.")
-            print(f"\n\n⚠️  {formatear_texto('Operación cancelada', 'amarillo')}: "
+            print(f"\n\n  {formatear_texto('Operación cancelada', 'amarillo')}: "
                    "Volviendo al menú principal.")
             time.sleep(2)
             return
@@ -457,7 +459,7 @@ def iniciar_aplicacion() -> None:
 
         else:
             log_warning(f"Opción de menú inválida: {opcion}")
-            print(f"\n⚠️  '{opcion if opcion else ' '}' no es una opción válida.")
+            print(f"\n  '{opcion if opcion else ' '}' no es una opción válida.")
             input("\nPresione Enter para intentarlo de nuevo...")
 
 if __name__ == "__main__":
@@ -482,4 +484,4 @@ if __name__ == "__main__":
         pass
     except Exception as e:
         log_critico(f"ERROR CRÍTICO NO CONTROLADO: {str(e)}")
-        print(f"\n❌ {formatear_texto('Error crítico')} inesperado: {e}")
+        print(f"\n {formatear_texto('Error crítico')} inesperado: {e}")
